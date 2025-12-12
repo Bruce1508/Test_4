@@ -45,7 +45,7 @@ app.get("/", async (req, res) => {
             req.session.reminderSlotId = null;
         }
     }    
-    return res.render("home.ejs", {timeslots:slots})
+    return res.render("home.ejs", {timeslots:slots, reminder: reminder})
 })
 
 app.post("/book/:id", async (req,res)=>{ 
@@ -58,9 +58,8 @@ app.post("/book/:id", async (req,res)=>{
 })
 
 app.get("/remind/:id", async (req,res)=>{  
-    req.session.reminderSlotId = req.params.id;   
-    console.log("sdfdsf")   
-    return res.send(`Reminder feature activated! <a href="/">Home</a>`)
+    req.session.reminderSlotId = req.params.id;
+    return res.redirect("/");
 })
 
 // 2. Manage Bookings endpoints
@@ -84,6 +83,7 @@ app.get("/cancel/:id", async (req,res)=>{
 app.get("/login", (req,res)=>{
     return res.render("login.ejs")
 })
+
 app.post("/login", async (req,res)=>{  
     const name = req.body.name;
     const manager = await Manager.findOne({name: name});

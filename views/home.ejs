@@ -24,14 +24,15 @@
     </div>
 
 
-    <!-- Continue booking message -->    
+    <% if (reminder) { %>
     <div role="alert" class="alert alert-warning my-4 w-xl mx-auto">
         <span>
-            <a href="/" class="link" >
-                Click here to continue booking for 23:59?
+            <a href="/" class="link">
+                Click here to continue booking for <%= reminder.time %>?
             </a>
         </span>
-    </div> 
+    </div>
+    <% } %> 
 
 
     <!-- show timeslots -->
@@ -42,20 +43,19 @@
         <!-- List of reservation timeslots -->
 
         <!-- ui for an available timeslot -->
-        <% for (let i = 0; i < timeslots.length; i++) { %> 
+        <% for (let i = 0; i < timeslots.length; i++) { %>
             <div class="flex flex-row justify-start gap-6 items-center my-2 p-4 border border-neutral-content rounded-sm">
-                <!-- time -->
-               <p><%= timeslots[i].time %></p>
-               
-                <!-- reminder link  -->
-                <a href="/remind/99999999" class="btn btn-neutral btn-outline">Set Reminder</a>   
+                <p><%= timeslots[i].time %></p>
 
-                <!-- booking form -->
-                <form action="/book/99999999" method="POST" class="join">
+                <% if (timeslots[i].customer === "") { %>
+                <a href="/remind/<%= timeslots[i]._id %>" class="btn btn-neutral btn-outline">Set Reminder</a>
+                <form action="/book/<%= timeslots[i]._id %>" method="POST" class="join">
                     <input type="text" name="txtCustomer" class="input" placeholder="What's your name?"/>
                     <button class="btn btn-primary join-item">Book</button>
-                </form>                       
-                
+                </form>
+                <% } else { %>
+                <p>Unavailable</p>
+                <% } %>
             </div>
         <% } %>   
     </div>    

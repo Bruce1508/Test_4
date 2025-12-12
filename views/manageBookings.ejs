@@ -15,18 +15,13 @@
         <!-- ui for timeslot  -->
         <% for (let i=0; i < timeslots.length; i++) { %>
             <div class="flex flex-row justify-between items-center my-2 p-2 border border-neutral-content rounded-sm">
-                <!-- time -->
-                <p>
-                    <%= timeslots[i].time %>
-                </p>
-                <!-- customer name -->
-                <p>
-                    <%= timeslots[i].customer %>
-                </p>
-                <!-- cancel button -->
-                <a href="/cancel/99999999" class="btn btn-error btn-soft">Cancel</a>
+                <p><%= timeslots[i].time %></p>
+                <% if (timeslots[i].customer !== "") { %>
+                <p><%= timeslots[i].customer %></p>
+                <a href="/cancel/<%= timeslots[i]._id %>" class="btn btn-error btn-soft">Cancel</a>
+                <% } %>
             </div>
-            <% } %>
+        <% } %>
 
 
 
