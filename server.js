@@ -35,36 +35,69 @@ const Timeslot = mongoose.model("timeslots", timeslotSchema)
 // 1. Home Page endpoints
 app.get("/", async (req, res) => {    
     // get all the timeslots from the database and display in UI.
-    const slots = await Timeslot.find()    
+    const slots = await Timeslot.find()
+    let reminder = null;
+    if (req.session.reminderSlotId) {
+        const reminderSlot = await Timeslot.findById(req.session.reminderSlotId);
+        if (reminderSlot && reminderSlot.customer === "") {
+            reminder = reminderSlot;
+        } else {
+            req.session.reminderSlotId = null;
+        }
+    }    
     return res.render("home.ejs", {timeslots:slots})
 })
-app.post("/book/:id", async (req,res)=>{        
+
+app.post("/book/:id", async (req,res)=>{ 
+    const customerName = req.body.txtCustomer;
+    await Timeslot.findByIdAndUpdate(req.params.id, {customer: customerName});
+    if (req.session.reminderSlotId === req.params.id) {
+        req.session.reminderSlotId = null;
+    }
     return res.send(`Success, your reservation number is ${req.params.id}. <a href="/">Home</a>`)
 })
-app.get("/remind/:id", async (req,res)=>{     
+
+app.get("/remind/:id", async (req,res)=>{  
+    req.session.reminderSlotId = req.params.id;   
     console.log("sdfdsf")   
     return res.send(`Reminder feature activated! <a href="/">Home</a>`)
 })
 
 // 2. Manage Bookings endpoints
 app.get("/manage", async (req,res)=>{
+    if (!req.session.manager) {
+        return res.redirect("/login");
+    }
     const slots = await Timeslot.find()
     return res.render("manageBookings.ejs", {timeslots:slots})
 })
-app.get("/cancel/:id", async (req,res)=>{    
+
+app.get("/cancel/:id", async (req,res)=>{
+    if (!req.session.manager) {
+        return res.redirect("/login");
+    }
+    await Timeslot.findByIdAndUpdate(req.params.id, {customer: ""});
     return res.send(`Reservation cancelled. <a href="/manage">Manage Bookings?</a>`)
 })
-
 
 // 3. Login/Logout endpoints
 app.get("/login", (req,res)=>{
     return res.render("login.ejs")
 })
-app.post("/login", async (req,res)=>{    
-    return res.redirect("/manage")    
+app.post("/login", async (req,res)=>{  
+    const name = req.body.name;
+    const manager = await Manager.findOne({name: name});
+    if (manager) {
+        req.session.manager = manager;
+        return res.redirect("/manage");
+    } else {
+        return res.redirect("/login");
+    }
 })
+
 app.get("/logout", (req,res) => {        
-    return res.redirect("/")
+    req.session.destroy();
+    return res.redirect("/");
 })
 
 
