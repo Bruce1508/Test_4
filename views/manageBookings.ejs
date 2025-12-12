@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Restaurant Reservations</title>
+    <link rel="stylesheet" href="/css/main.css"/>
+</head>
+
+<body>    
+    <div class="w-md mx-auto mt-4">    
+        <h1 class="text-2xl mb-4">Manage Bookings</h1>
+
+        <!-- ui for timeslot  -->
+        <% for (let i = 0; i < timeslots.length; i++) { %>
+            <div class="flex flex-row justify-between items-center my-2 p-2 border border-neutral-content rounded-sm">            
+                <!-- time -->
+               <p><%= timeslots[i].time %></p>
+               <!-- customer name -->
+               <p><%= timeslots[i].customer %></p>
+                <!-- cancel button -->
+                <a href="/cancel/99999999" class="btn btn-error btn-soft">Cancel</a>
+            </div>
+        <% } %>
+ 
+        
+
+        <!-- home and logout buttons -->
+        <div class="my-8">
+            <a class="btn btn-outline btn-primary" href="/">Home</a>
+            <a class="btn btn-neutral" href="/logout">Logout</a>    
+        </div>
+    </div> 
+    
+</body>
+</html>
